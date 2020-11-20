@@ -140,6 +140,27 @@ function runSearch() {
                             console.table(res);
                             runSearch();
                         })
+                    break;
+                    case "Update Employee Role":
+                        inquirer.prompt([
+                            {
+                                name: "update",
+                                message: "what employee would you like to update?",
+                                type: "input"
+                            },
+                            {
+                                name: "updateRole",
+                                type: "input",
+                                message: "what do you want to update to?"
+                            }
+                        ]).then(function(answer){
+                            connection.query('UPDATE employee SET role=? WHERE first_name=?', [answer.updateRole, answer.update], function(err,res){
+                                if (err) throw err;
+                                console.table(res);
+                                runSearch();
+                            })
+                        })
+
 
 
             };
