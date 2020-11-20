@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS trackDB;
-CREATE DATABASE trackDB;
+DROP DATABASE IF EXISTS emptrackdb;
+CREATE DATABASE emptrackdb;
 
-USE trackDB;
+USE emptrackdb;
 
 CREATE TABLE department (
     id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -19,7 +19,5 @@ CREATE TABLE employee (
     id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     first_name VARCHAR(30) NULL,
     last_name VARCHAR(30) NULL,
-    role_id INT NULL,
+    role VARCHAR(30) NULL,
 );
-
-SELECT * FROM trackDB

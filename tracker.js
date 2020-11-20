@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 
     // Your password
     password: "password",
-    database: "trackDB"
+    database: "emptrackdb"
 });
 connection.connect(function (err) {
     if (err) throw err;
@@ -29,21 +29,23 @@ function runSearch() {
                 "View All Employees",
                 "Add Employee",
                 "Add Role",
+                "View All Roles",
                 "Add Department",
+                "View Departments",
                 "Update Employee Role", ,
             ],
-            loop: false
+            // loop: false
 
         }]).then(function (answer) {
             switch (answer.choice) {
                 case "View All Employees":
 
-                    connection.query(`SELECT employee.id, employee.first_name, employee.last_name, employee.role_id FROM employee`,
-                        function (err, res) {
+                    connection.query(`SELECT employee.id, employee.first_name, employee.last_name, employee.role FROM employee`,
+                        function (err, answer) {
                             if (err) {
                                 throw err;
                             }
-                            console.table(res);
+                            console.table(answer);
                             runSearch();
                         });
                     break;
@@ -66,21 +68,83 @@ function runSearch() {
                             message: "What is this employees role?"
                         },
 
-                    ]).then(function (response) {
+                    ]).then(function (answer) {
                         connection.query(`INSERT INTO employee set ?`, {
-                            first_name: response.firstName,
-                            last_name: response.lastName,
-                            role_id: response.role
-                        }, function (err, res) {
+                            first_name: answer.firstName,
+                            last_name: answer.lastName,
+                            role: answer.role
+                        }, function (err, answer) {
                             if (err) {
                                 throw err;
                             }
                             runSearch();
-
                         });
-                    
                     });
                     break;
+                case "Add Role":
+                    inquirer.prompt([
+                        {
+                            name: "roleTitle",
+                            type: "input",
+                            message: "what is this roles title?"
+                        },
+                        {
+                            name: "salary",
+                            message: "what is the salary for this role?",
+                            type: "input",
+
+                        },
+                        {
+                            name: "depID",
+                            type: "input",
+                            message: "what is the department id number?"
+                        }
+                    ]).then(function (answer) {
+                        connection.query("INSERT INTO role(title, salary, department_id) VALUES (?,?,?)", [answer.roleTitle, answer.salary, answer.depID], function (err, res) {
+                            if (err) throw err;
+                            runSearch();
+                        })
+                    })
+                    break;
+                    case "View All Roles":
+
+                        connection.query(`SELECT role.title, role.salary, department_id FROM role`,
+                            function (err, answer) {
+                                if (err) {
+                                    throw err;
+                                }
+                                console.table(answer);
+                                runSearch();
+                            });
+                        break;
+                case "Add Department":
+                        inquirer.prompt([
+                            {
+                                name: "depName",
+                                type: "input",
+                                message: "what is the name of the department?"
+                            },
+                        ])
+                    .then(function (answer) {
+                        connection.query("INSERT INTO department(department_name) VALUES (?)", [answer.depName], function (err, res) {
+                            if (err) throw err;
+                            console.table(answer)
+                            runSearch()
+                        })
+                    })
+                    break;
+                    case "View Departments":
+                        let query = "SELECT * FROM department";
+                        connection.query(query, function(err, res) {
+                            if (err) throw err;
+                            console.table(res);
+                            runSearch();
+                        })
+
+
+            };
+        })
+};
 // prompt asking what user should do
 // add employee view all add role, add department, update employee role
 // add employee ask first name last name id department and role and id number
